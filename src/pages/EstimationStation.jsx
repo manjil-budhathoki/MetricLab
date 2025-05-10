@@ -59,12 +59,22 @@ export default function EstimationStation() {
 
   useEffect(() => {
     let timer = null;
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && gameState === 'playing') {
+        submitGuess();
+      }
+    };
+    document.addEventListener('keydown', handleKeyPress);
+
     if (gameState === 'playing' && timeLeft > 0) {
       timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     } else if (gameState === 'playing' && timeLeft === 0 && currentGuess === '') {
       submitGuess();
     }
-    return () => { if (timer) clearTimeout(timer); };
+    return () => {
+      if (timer) clearTimeout(timer);
+      document.removeEventListener('keydown', handleKeyPress);
+    };
   }, [timeLeft, gameState, currentGuess]);
 
   const renderDots = (count) => {
@@ -124,53 +134,55 @@ export default function EstimationStation() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 min-h-screen bg-gradient-to-br from-[#120230] via-[#330344] to-[#240b36] text-white">
-      <h1 className="text-3xl font-bold text-center mb-4 text-cyan-400">Estimation Station</h1>
-      <h2 className="text-xl text-center mb-8 text-purple-300">Learn about RMSE by guessing quantities!</h2>
+    <div className="w-full min-h-screen p-4 flex flex-col items-center justify-start bg-gradient-to-br from-[#120230] via-[#330344] to-[#240b36] text-white">
+      <div className="w-full max-w-4xl">
+        <h1 className="text-3xl font-bold text-center mb-4 text-cyan-400">Estimation Station</h1>
+        <h2 className="text-xl text-center mb-8 text-purple-300">Learn about RMSE by guessing quantities!</h2>
 
-      {gameState === 'welcome' && (
-        <div className="text-center">
-          <div className="bg-[#121c30] p-6 rounded-lg shadow-xl border border-purple-600 max-w-xl mx-auto">
-            <h3 className="text-xl font-bold mb-4 text-cyan-400">How to Play</h3>
-            <p className="mb-4 text-gray-300">You'll be shown images with random dots for 10 seconds each.</p>
-            <p className="mb-4 text-gray-300">Estimate how many dots you see, then enter your guess.</p>
-            <p className="mb-4 text-gray-300">After {totalRounds} rounds, we'll calculate your RMSE (Root Mean Square Error).</p>
-            <p className="mb-4 text-cyan-300">Lower RMSE = Better accuracy!</p>
+        {gameState === 'welcome' && (
+          <div className="text-center">
+            <div className="bg-[#121c30] p-6 rounded-lg shadow-xl border border-purple-600 max-w-xl mx-auto">
+              <h3 className="text-xl font-bold mb-4 text-cyan-400">How to Play</h3>
+              <p className="mb-4 text-gray-300">You'll be shown images with random dots for 10 seconds each.</p>
+              <p className="mb-4 text-gray-300">Estimate how many dots you see, then enter your guess.</p>
+              <p className="mb-4 text-gray-300">After {totalRounds} rounds, we'll calculate your RMSE (Root Mean Square Error).</p>
+              <p className="mb-4 text-cyan-300">Lower RMSE = Better accuracy!</p>
+            </div>
+            <button onClick={startGame} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition duration-300 mt-6">
+              Start Game
+            </button>
           </div>
-          <button onClick={startGame} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition duration-300 mt-6">
-            Start Game
-          </button>
-        </div>
-      )}
+        )}
 
-      {gameState === 'playing' && (
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-lg font-bold text-cyan-400">Round: {currentRound}/{totalRounds}</div>
-            <div className="text-lg font-bold text-amber-500">Time Left: {timeLeft}s</div>
-          </div>
-          <div className="relative w-full h-80 bg-[#1a1c2c] rounded-lg shadow-inner mb-6 border border-purple-500">
-            {currentImage && renderDots(actuals[actuals.length - 1])}
-          </div>
-          <div className="mb-6">
-            <label className="block text-lg font-bold mb-2 text-cyan-400">How many dots did you see?</label>
-            <div className="flex">
-              <input type="number" value={currentGuess} onChange={e => setCurrentGuess(e.target.value)} className="flex-grow p-2 border bg-gray-800 border-purple-500 rounded-l-lg text-lg text-white placeholder-gray-400" placeholder="Enter your guess..." />
-              <button onClick={submitGuess} className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold py-2 px-6 rounded-r-lg text-lg">Submit</button>
+        {gameState === 'playing' && (
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-lg font-bold text-cyan-400">Round: {currentRound}/{totalRounds}</div>
+              <div className="text-lg font-bold text-amber-500">Time Left: {timeLeft}s</div>
+            </div>
+            <div className="relative w-full h-80 bg-[#1a1c2c] rounded-lg shadow-inner mb-6 border border-purple-500">
+              {currentImage && renderDots(actuals[actuals.length - 1])}
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg font-bold mb-2 text-cyan-400">How many dots did you see?</label>
+              <div className="flex">
+                <input type="number" value={currentGuess} onChange={e => setCurrentGuess(e.target.value)} className="flex-grow p-2 border bg-gray-800 border-purple-500 rounded-l-lg text-lg text-white placeholder-gray-400" placeholder="Enter your guess..." />
+                <button onClick={submitGuess} className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold py-2 px-6 rounded-r-lg text-lg">Submit</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {gameState === 'results' && (
-        <div>
-          {renderResultsTable()}
-          <div className="text-center mt-8">
-            <button onClick={startGame} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg mr-4 shadow-lg transition duration-300">Play Again</button>
-            <button onClick={() => navigate('/regression/rmse')} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition duration-300 mt-4">Continue to Learn RMSE 📘</button>
+        {gameState === 'results' && (
+          <div>
+            {renderResultsTable()}
+            <div className="text-center mt-8">
+              <button onClick={startGame} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg mr-4 shadow-lg transition duration-300">Play Again</button>
+              <button onClick={() => navigate('/regression/rmse')} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition duration-300 mt-4">Continue to Learn RMSE 📘</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

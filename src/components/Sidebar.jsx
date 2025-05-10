@@ -1,4 +1,4 @@
-import { Home, Info, BarChart3  } from 'lucide-react';
+import { Home, Info, LineChart, PieChart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Sidebar() {
@@ -7,8 +7,8 @@ export default function Sidebar() {
 
   const navItems = [
     { icon: <Home size={22} />, route: '/', label: 'Home' },
-    { icon: <BarChart3 size={22} />, route: '/regression', label: 'Regression' },
-    { icon: <BarChart3 size={22} />, route: '/classification', label: 'Classification' },
+    { icon: <LineChart size={22} />, route: '/regression', label: 'Regression' },
+    { icon: <PieChart size={22} />, route: '/classification', label: 'Classification' },
     { icon: <Info size={22} />, route: '/about', label: 'About' },
   ];
 
