@@ -9,7 +9,6 @@ export default function Sidebar() {
     { icon: <Home size={22} />, route: '/', label: 'Home' },
     { icon: <LineChart size={22} />, route: '/regression', label: 'Regression' },
     { icon: <PieChart size={22} />, route: '/classification', label: 'Classification' },
-    { icon: <Info size={22} />, route: '/about', label: 'About' },
   ];
 
   return (
